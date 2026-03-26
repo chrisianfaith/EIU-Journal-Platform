@@ -1,0 +1,236 @@
+/**
+ * EIU Research Publication — Nav User Menu v1.7
+ *
+ * Scoped entirely to #eiu-nav-user-widget.
+ * Theme-agnostic: JS moves the widget into whatever nav the theme uses.
+ * No external dependencies. No global style pollution.
+ */
+
+/* ── Login items hidden when user is logged in ──────────────────────
+   Applied server-side by the wp_nav_menu_items filter, and client-side
+   by nav-user-menu.js. Both paths set this class on the <li> element.  */
+li.eiu-rp-login-hidden,
+.eiu-rp-login-hidden {
+  display: none !important;
+}
+
+/* ── Reset inside the widget ────────────────────────────────── */
+#eiu-nav-user-widget,
+#eiu-nav-user-widget * {
+  box-sizing: border-box;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ── Trigger (always-visible pill) ─────────────────────────── */
+#eiu-nav-user-widget {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  /* Prevent theme margins from pushing it out of the flow */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eiu-nav-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 6px;
+  border-radius: 40px;
+  background: #1a4988;
+  color: #ffffff;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  border: none;
+  outline: none;
+  /* Ensure it sits above theme nav items */
+  position: relative;
+  z-index: 1;
+}
+.eiu-nav-trigger:hover,
+.eiu-nav-trigger:focus-visible {
+  background: #123266;
+  box-shadow: 0 0 0 3px rgba(26,73,136,0.25);
+}
+.eiu-nav-trigger[aria-expanded="true"] {
+  background: #123266;
+}
+
+/* Avatar circle */
+.eiu-nav-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.4);
+  flex-shrink: 0;
+  display: block;
+  background: #990000;
+}
+
+/* Initials fallback (shown when avatar image fails to load) */
+.eiu-nav-av-initial {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #990000;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.4);
+  font-family: 'Cabinet Grotesk', 'DM Sans', sans-serif;
+}
+
+/* "Hi, Name" text */
+.eiu-nav-greeting {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Caret chevron */
+.eiu-nav-caret {
+  color: rgba(255,255,255,0.7);
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+.eiu-nav-trigger[aria-expanded="true"] .eiu-nav-caret {
+  transform: rotate(180deg);
+}
+
+/* ── Dropdown panel ─────────────────────────────────────────── */
+.eiu-nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 192px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+  padding: 6px;
+  z-index: 99999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  pointer-events: none;
+}
+/* Open state */
+.eiu-nav-dropdown.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Dropdown items */
+.eiu-nav-dd-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 13px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  text-decoration: none;
+  transition: background 0.13s ease, color 0.13s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.eiu-nav-dd-item:hover,
+.eiu-nav-dd-item:focus-visible {
+  background: #eef4ff;
+  color: #1a4988;
+  text-decoration: none;
+  outline: none;
+}
+.eiu-nav-dd-item svg {
+  flex-shrink: 0;
+  color: #94a3b8;
+  transition: color 0.13s;
+}
+.eiu-nav-dd-item:hover svg,
+.eiu-nav-dd-item:focus-visible svg {
+  color: #1a4988;
+}
+
+/* Divider */
+.eiu-nav-dd-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 4px 6px;
+}
+
+/* Logout item — distinct red tint */
+.eiu-nav-dd-logout {
+  color: #991b1b;
+}
+.eiu-nav-dd-logout svg { color: #f87171; }
+.eiu-nav-dd-logout:hover,
+.eiu-nav-dd-logout:focus-visible {
+  background: #990000;
+  color: #ffffff;
+}
+.eiu-nav-dd-logout:hover svg,
+.eiu-nav-dd-logout:focus-visible svg {
+  color: rgba(255,255,255,0.8);
+}
+
+/* ── Role badge in greeting ─────────────────────────────────── */
+.eiu-nav-role-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.85);
+  border-radius: 20px;
+  padding: 1px 7px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* ── Mobile tweaks ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .eiu-nav-greeting {
+    display: none; /* avatar-only on small screens */
+  }
+  .eiu-nav-caret { display: none; }
+  .eiu-nav-trigger {
+    padding: 4px;
+    border-radius: 50%;
+    background: #1a4988;
+  }
+  .eiu-nav-avatar {
+    width: 34px;
+    height: 34px;
+  }
+  .eiu-nav-dropdown {
+    right: 0;
+    left: auto;
+    min-width: 176px;
+  }
+}
+@media (max-width: 480px) {
+  .eiu-nav-dropdown {
+    /* On very small screens, allow dropdown to go left-edge-constrained */
+    left: auto;
+    right: 0;
+  }
+}

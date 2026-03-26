@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EIU Research Publication — Changelog</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:      #1a4988;
+    --blue-dark: #123266;
+    --blue-light:#e8f1fb;
+    --red:       #990000;
+    --red-light: #fef2f2;
+    --green:     #059669;
+    --green-lt:  #ecfdf5;
+    --amber:     #d97706;
+    --amber-lt:  #fffbeb;
+    --gray:      #6b7280;
+    --gray-lt:   #f9fafb;
+    --border:    #e5e7eb;
+    --text:      #1f2937;
+    --text-2:    #4b5563;
+    --radius:    10px;
+    --font:      'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    color: var(--text);
+    background: #f3f6fb;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+    padding: 48px 32px 40px;
+    text-align: center;
+    color: #fff;
+  }
+  .site-header .plugin-icon {
+    width: 64px; height: 64px;
+    background: rgba(255,255,255,.15);
+    border: 2px solid rgba(255,255,255,.25);
+    border-radius: 16px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin-bottom: 18px;
+  }
+  .site-header h1 {
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 900;
+    letter-spacing: -.02em;
+    margin-bottom: 8px;
+  }
+  .site-header h1 span { color: #f5c842; }
+  .site-header .meta {
+    font-size: 13px;
+    color: rgba(255,255,255,.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .site-header .meta span { display: flex; align-items: center; gap: 6px; }
+  .version-badge {
+    display: inline-block;
+    background: #f5c842;
+    color: var(--blue-dark);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .06em;
+    padding: 4px 14px;
+    border-radius: 99px;
+    margin-top: 14px;
+  }
+
+  /* ── Attribution ── */
+  .attribution {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .attribution .attr-item { display: flex; align-items: center; gap: 8px; }
+  .attribution .attr-label { font-weight: 700; color: var(--blue); }
+  .attribution .attr-val { color: var(--text-2); }
+
+  /* ── Main container ── */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── Section ── */
+  .section {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 28px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .section-head {
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-head h2 {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -.01em;
+  }
+  .section-head .icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+  .section-body { padding: 20px 24px; }
+
+  /* ── Version block ── */
+  .version-block { margin-bottom: 32px; }
+  .version-block:last-child { margin-bottom: 0; }
+  .version-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 16px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    margin-bottom: 14px;
+  }
+  .v-latest { background: var(--blue); color: #fff; }
+  .v-prev    { background: var(--gray-lt); color: #374151; border: 1px solid var(--border); }
+
+  /* ── Change items ── */
+  .change-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .change-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    border: 1px solid transparent;
+  }
+  .change-item .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 2px;
+  }
+  .badge-fix      { background: #fef9c3; color: #713f12; }
+  .badge-new      { background: #dcfce7; color: #14532d; }
+  .badge-enhance  { background: #dbeafe; color: #1e3a8a; }
+  .badge-security { background: #fee2e2; color: #7f1d1d; }
+  .badge-compat   { background: #f3e8ff; color: #581c87; }
+  .badge-ui       { background: #fce7f3; color: #831843; }
+  .badge-perf     { background: #e0f2fe; color: #0c4a6e; }
+
+  .item-fix      { background: #fefce8; border-color: #fef08a; }
+  .item-new      { background: #f0fdf4; border-color: #86efac; }
+  .item-enhance  { background: #eff6ff; border-color: #bfdbfe; }
+  .item-security { background: #fef2f2; border-color: #fecaca; }
+  .item-compat   { background: #faf5ff; border-color: #e9d5ff; }
+  .item-ui       { background: #fdf2f8; border-color: #fbcfe8; }
+  .item-perf     { background: #f0f9ff; border-color: #bae6fd; }
+
+  .change-item strong { color: var(--text); }
+  .change-item .file  { font-size: 11px; color: var(--gray); font-family: 'Courier New', monospace; margin-top: 3px; display: block; }
+
+  /* ── Summary cards ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .sum-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  }
+  .sum-card .num  { font-size: 32px; font-weight: 900; line-height: 1; margin-bottom: 5px; }
+  .sum-card .lbl  { font-size: 12px; font-weight: 600; color: var(--gray); }
+  .sum-card.blue  .num { color: var(--blue); }
+  .sum-card.red   .num { color: var(--red); }
+  .sum-card.green .num { color: var(--green); }
+  .sum-card.amber .num { color: var(--amber); }
+  .sum-card.purple .num { color: #7c3aed; }
+  .sum-card.pink  .num { color: #db2777; }
+
+  /* ── File table ── */
+  .file-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .file-table th { background: var(--gray-lt); padding: 9px 14px; text-align: left; font-weight: 700; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--gray); border-bottom: 1px solid var(--border); }
+  .file-table td { padding: 9px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+  .file-table tr:last-child td { border-bottom: none; }
+  .file-table .fname { font-family: 'Courier New', monospace; font-size: 12px; color: var(--blue); }
+  .file-table .fdesc { color: var(--text-2); }
+
+  /* ── Compat table ── */
+  .compat-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .compat-row:last-child { border-bottom: none; }
+  .compat-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: var(--green); }
+  .compat-key { font-weight: 700; color: var(--text); min-width: 180px; }
+  .compat-val { color: var(--text-2); }
+
+  /* ── Footer ── */
+  .site-footer {
+    background: var(--blue-dark);
+    color: rgba(255,255,255,.6);
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .site-footer strong { color: #fff; }
+
+  @media (max-width: 600px) {
+    .site-header { padding: 32px 20px; }
+    .attribution { flex-direction: column; gap: 10px; align-items: flex-start; padding: 16px 20px; }
+    .container { padding: 24px 16px 60px; }
+    .section-body { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <div class="plugin-icon">📚</div>
+  <h1>EIU Research <span>Publication</span></h1>
+  <div class="meta">
+    <span>🏫 EIU IT Department</span>
+    <span>👨‍💻 Christian Manaoat</span>
+    <span>📧 support@eiu.ac</span>
+    <span>🔗 eiu.ac</span>
+  </div>
+  <div><span class="version-badge">VERSION 2.0.0 — CHANGELOG</span></div>
+</header>
+
+<!-- ── Attribution ── -->
+<div class="attribution">
+  <div class="attr-item">
+    <span class="attr-label">Plugin Name:</span>
+    <span class="attr-val">EIU Research Publication</span>
+  </div>
+  <div class="attr-item">
+    <span class="attr-label">Author / Organization:</span>
+    <span class="attr-val">EIU IT Department</span>
+  </div>
+  <div class="attr-item">
+    <span class="attr-label">Developer:</span>
+    <span class="attr-val">Christian Manaoat</span>
+  </div>
+  <div class="attr-item">
+    <span class="attr-label">Contact:</span>
+    <span class="attr-val">support@eiu.ac</span>
+  </div>
+  <div class="attr-item">
+    <span class="attr-label">License:</span>
+    <span class="attr-val">2021-989820-PH</span>
+  </div>
+  <div class="attr-item">
+    <span class="attr-label">Current Version:</span>
+    <span class="attr-val">2.0.0</span>
+  </div>
+</div>
+
+<!-- ── Main ── -->
+<div class="container">
+
+  <!-- Summary cards -->
+  <div class="summary-grid">
+    <div class="sum-card blue"><div class="num">6</div><div class="lbl">New Features</div></div>
+    <div class="sum-card red"><div class="num">8</div><div class="lbl">Bugs Fixed</div></div>
+    <div class="sum-card green"><div class="num">12</div><div class="lbl">Enhancements</div></div>
+    <div class="sum-card amber"><div class="num">4</div><div class="lbl">Security Fixes</div></div>
+    <div class="sum-card purple"><div class="num">3</div><div class="lbl">Compat Fixes</div></div>
+    <div class="sum-card pink"><div class="num">18</div><div class="lbl">Files Modified</div></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       VERSION 2.0.0
+  ═════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-head" style="background:#eff6ff;">
+      <div class="icon" style="background:#dbeafe;color:#1e40af;">🚀</div>
+      <div>
+        <h2>Version 2.0.0 — Major Release</h2>
+        <p style="font-size:12px;color:#6b7280;">Multi-session development · March 2026</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <!-- NEW FEATURES -->
+      <div class="version-block">
+        <div class="version-tag v-latest">✨ New Features</div>
+        <ul class="change-list">
+
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>
+              <strong>Unified Login System (Single Entry Point)</strong>
+              — Replaced separate Researcher and Reviewer login pages with one unified login interface at <code>/login/</code>. Role-based automatic redirection: Researchers go to <code>/researcher-dashboard/</code>, Reviewers to <code>/reviewer-dashboard/</code>. Already-logged-in users are redirected immediately without seeing the form.
+              <span class="file">templates/frontend/unified-login.php · includes/api/class-researcher-handler.php · includes/core/class-upgrader.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>
+              <strong>Reviewer Email OTP Verification Gate</strong>
+              — Reviewer logins now require a 3-step email OTP flow: (1) enter registered email → (2) enter 6-digit code sent via <code>wp_mail()</code> → (3) enter password. OTP is cryptographically generated with <code>random_int()</code>, stored as a hashed WordPress transient with 5-minute TTL, consumed on first use. A short-lived verification token is issued to the login form and verified server-side before <code>wp_signon()</code> proceeds. Full rate-limiting: 3 OTP sends / 5 verify attempts per IP per 10 minutes.
+              <span class="file">includes/api/class-researcher-handler.php (send_reviewer_otp, verify_reviewer_otp)</span>
+            </div>
+          </li>
+
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>
+              <strong>Submission Form — Step-by-Step Wizard</strong>
+              — Converted the 10-section submission form from a scroll-spy tab layout (all steps visible at once) to a true one-step-at-a-time wizard. Includes: animated progress bar, Prev/Next/Submit navigation, per-step validation with inline error messages, step indicator pills with active/done states, and a "Save draft" link accessible on every step.
+              <span class="file">templates/frontend/submission-form.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>
+              <strong>Real-Time Article Status Synchronisation</strong>
+              — Researcher Dashboard now polls for status changes every 30 seconds on the Submissions tab via a new lightweight AJAX endpoint (<code>eiu_rp_get_article_statuses</code>). When a reviewer updates a status, a fixed-position toast notification slides in — "Article status updated — click to refresh" — without any delay. Each article row carries <code>data-article-id</code> and <code>data-status</code> HTML attributes for comparison.
+              <span class="file">templates/frontend/researcher-dashboard.php · includes/api/class-researcher-handler.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>
+              <strong>Submission Form Access Wall</strong>
+              — Non-researchers/non-reviewers visiting the submission page now see a branded access-denied wall instead of a plain error string. Includes: lock icon, "What you need" requirement list, Contact Admin (mailto) button, Apply as Researcher button, and Sign In link — all linking to the correct unified login page.
+              <span class="file">includes/core/class-plugin.php (render_submission_form)</span>
+            </div>
+          </li>
+
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>
+              <strong>Published Article Edit Lock</strong>
+              — Researchers can no longer edit articles with "published" status. Attempting to navigate to the resubmit URL for a published article shows a clear "Article is Published — Editing Locked" screen with a lock icon and administrator contact guidance. The "Revise &amp; Resubmit" button is replaced by a "Read-only" badge on published articles in the submissions list.
+              <span class="file">templates/frontend/researcher-dashboard.php</span>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+
+      <!-- BUG FIXES -->
+      <div class="version-block">
+        <div class="version-tag v-prev">🐛 Bug Fixes</div>
+        <ul class="change-list">
+
+          <li class="change-item item-fix">
+            <span class="badge badge-fix">FIX</span>
+            <div>
+              <strong>Critical: "Network Error" on OTP Send button</strong>
+              — Root cause: <code>send_reviewer_otp()</code> queried <code>wp_eiu_reviewers WHERE ... AND is_deleted = 0</code> but the <code>is_deleted</code> column did not exist on the <code>eiu_reviewers</code> table (only on <code>eiu_reviews</code>). This caused a MySQL "Unknown column" error, which printed into the output buffer before the JSON response, making <code>fetch().then(r => r.json())</code> throw a SyntaxError, triggering the catch handler with "Network error".
+              <span class="file">includes/api/class-researcher-handler.php · includes/core/class-upgrader.php (migrate_1_6) · includes/core/class-activator.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-fix">
+            <span class="badge badge-fix">FIX</span>
+            <div>
+              <strong>Submission form step 4 blocked by non-existent field validation</strong>
+              — <code>stepValidation[4]</code> referenced <code>author_org</code> but no such input field exists in the Author Details step HTML. This caused step 4 validation to always fail silently, blocking users from advancing. The field was removed from the validation array.
+              <span class="file">templates/frontend/submission-form.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-fix">
+            <span class="badge badge-fix">FIX</span>
+            <div>
+              <strong>PHP 7.4 incompatibility in article status polling endpoint</strong>
+              — <code>get_article_statuses()</code> used the PHP 8.1 spread operator (<code>...$args</code>) in a <code>$wpdb->prepare()</code> call. This caused a fatal error on PHP 7.4 servers. Replaced with <code>call_user_func_array([$wpdb, 'prepare'], ...)</code> for full PHP 7.4+ compatibility.
+              <span class="file">includes/api/class-researcher-handler.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-fix">
+            <span class="badge badge-fix">FIX</span>
+            <div>
+              <strong>Stale teal/pill/desc CSS conflicting with red reviewer identity</strong>
+              — The unified login template retained several orphaned CSS rules from an earlier design iteration: <code>.ul-role-pill</code>, <code>.ul-role-desc</code>, <code>.ul-role-pill-reviewer</code> (teal), and <code>.role-reviewer</code> step-indicator overrides. These conflicted with the correct red (<code>#990000</code>) reviewer visual identity. All stale rules removed.
+              <span class="file">templates/frontend/unified-login.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-fix">
+            <span class="badge badge-fix">FIX</span>
+            <div>
+              <strong>Stale <code>role-reviewer</code> JS setting teal colours on reviewer login</strong>
+              — An init IIFE in the unified login template added the <code>role-reviewer</code> CSS class to the wrapper element when the reviewer tab was pre-selected. This class applied teal (<code>#0f766e</code>) step-indicator colours, overriding the correct EIU Red. JS block removed.
+              <span class="file">templates/frontend/unified-login.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-fix">
+            <span class="badge badge-fix">FIX</span>
+            <div>
+              <strong>Wizard nav bar missing mobile responsive styles</strong>
+              — The <code>.eiu-sf-wizard-nav</code>, <code>.eiu-sf-nav-btn</code>, and progress bar elements were not covered by the existing <code>@media(max-width:640px)</code> rule. On mobile the nav bar overflowed and buttons were oversized. Mobile CSS added for all new wizard elements.
+              <span class="file">templates/frontend/submission-form.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-fix">
+            <span class="badge badge-fix">FIX</span>
+            <div>
+              <strong>Redundant polling fallback JS using fragile CSS class regex</strong>
+              — The real-time polling code contained a fallback that attempted to populate <code>data-status</code> attributes by running a regex against badge CSS class names (<code>/st-([a-z_]+)/</code>). Since <code>data-article-id</code> and <code>data-status</code> are now set directly in the PHP template, this fallback was redundant and error-prone. Removed.
+              <span class="file">templates/frontend/researcher-dashboard.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-fix">
+            <span class="badge badge-fix">FIX</span>
+            <div>
+              <strong>Reviewer dashboard inline login form bypassed unified login system</strong>
+              — The reviewer dashboard template had its own inline POST-based login form (<code>eiu_reviewer_login</code> nonce) that was entirely separate from the unified login flow. This dual-login system caused confusion and bypassed the OTP gate. The inline form was removed; unauthenticated users are now redirected to the unified login page with a <code>redirect_to</code> parameter.
+              <span class="file">templates/frontend/reviewer-dashboard.php</span>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+
+      <!-- ENHANCEMENTS -->
+      <div class="version-block">
+        <div class="version-tag v-prev">⚡ Enhancements</div>
+        <ul class="change-list">
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Abstract WYSIWYG editor upgraded</strong>
+              — Added <code>formatselect</code> (paragraph/heading dropdown), <code>block_formats</code> (H2, H3, H4), <code>blockquote</code>, full image embed support, and <code>image_advtab</code>. Editor height increased to 10 rows. Content style updated to render headings at correct sizes inside the editor preview.
+              <span class="file">templates/frontend/submission-form.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Login page role distinction — colour-coded cards</strong>
+              — The two role tabs on the unified login now use full card-style buttons with individual icon badges and two-line labels ("Researcher / Submit &amp; track articles" vs "Reviewer / Review assigned articles"). Researcher tab: EIU Blue (<code>#1a4988</code>). Reviewer tab: EIU Red (<code>#990000</code>). A colour-coded banner beneath the tabs updates instantly on switch to confirm the active role.
+              <span class="file">templates/frontend/unified-login.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Personalised navigation bar user menu</strong>
+              — When a Researcher or Reviewer is logged in, their name, role badge, and avatar appear in the WordPress nav menu. A dropdown provides links to Dashboard, My Profile, and Sign Out. Completely theme-agnostic: four-step injection strategy covers any WordPress theme. Login menu items are automatically hidden when logged in (server-side filter + client-side JS).
+              <span class="file">includes/core/class-plugin.php · assets/js/nav-user-menu.js · assets/css/nav-user-menu.css</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Dashboard Sign Out visibility improvement</strong>
+              — Both Researcher and Reviewer dashboard sidebars now feature a high-contrast dark navy (<code>#0a1628</code>) footer with white text and a full-width red hover state (<code>#990000</code>). Previously the Sign Out link was a muted grey barely visible at the bottom of the sidebar.
+              <span class="file">templates/frontend/researcher-dashboard.php · templates/frontend/reviewer-dashboard.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Cross-role access protection on both dashboards</strong>
+              — Reviewers visiting the Researcher Dashboard are redirected to their own dashboard, and vice versa. Prevents role confusion and accidental cross-access. Administrators bypass both guards.
+              <span class="file">templates/frontend/researcher-dashboard.php · templates/frontend/reviewer-dashboard.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Database: <code>is_deleted</code> column added to <code>eiu_reviewers</code></strong>
+              — The column was present in <code>eiu_reviews</code> but missing from <code>eiu_reviewers</code>. Added via <code>migrate_1_6()</code> using idempotent <code>ALTER TABLE … ADD COLUMN</code> (checks with DESCRIBE first). Also added to the <code>CREATE TABLE</code> definition in the activator for fresh installs. Schema version bumped to 1.6.
+              <span class="file">includes/core/class-upgrader.php · includes/core/class-activator.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Database table auto-bootstrap on ZIP upload installs</strong>
+              — When the plugin is installed by uploading a ZIP file, WordPress does not fire <code>register_activation_hook</code>. The upgrader's <code>maybe_upgrade()</code> now checks whether the primary table (<code>wp_eiu_articles</code>) exists on every <code>plugins_loaded</code> call. If missing, it runs <code>Activator::bootstrap_tables()</code> and schedules deferred page creation. No data loss possible — all DDL uses <code>CREATE TABLE IF NOT EXISTS</code>.
+              <span class="file">includes/core/class-upgrader.php · includes/core/class-activator.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Login menu items hidden for logged-in users</strong>
+              — A <code>wp_nav_menu_items</code> PHP filter (priority 20) adds <code>class="eiu-rp-login-hidden"</code> to any <code>&lt;li&gt;</code> whose href matches known login URLs or whose text matches common login phrases. Client-side JS also hides matching items (including Elementor nav widgets) before the user widget is injected. <code>display:none !important</code> in CSS ensures immediate hiding.
+              <span class="file">includes/core/class-plugin.php · assets/js/nav-user-menu.js · assets/css/nav-user-menu.css</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Unified login page auto-created for existing installs</strong>
+              — <code>migrate_1_5()</code> creates a WordPress page at slug <code>/login/</code> with shortcode <code>[eiu_unified_login]</code> for all existing installations. Deferred to <code>init</code> hook so <code>wp_insert_post()</code> runs when <code>$wp_rewrite</code> is available. If a page with slug <code>login</code> already exists, the option is updated to point to it instead.
+              <span class="file">includes/core/class-upgrader.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Researcher dashboard auth guard uses unified login</strong>
+              — Changed from redirecting to the old <code>/researcher/</code> login page to the new unified <code>/login/</code> page, passing a <code>redirect_to</code> parameter so the user returns to their dashboard after login.
+              <span class="file">templates/frontend/researcher-dashboard.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>[eiu_researcher_login] shortcode backward compatibility</strong>
+              — The old shortcode now delegates to the unified login template. All existing pages using <code>[eiu_researcher_login]</code> continue to work without any content changes required.
+              <span class="file">includes/core/class-plugin.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>
+              <strong>Researcher dashboard published articles show read-only badge</strong>
+              — Published articles in the Submissions tab now display a green "Published — Editing Locked" label and a grey "Read-only" badge with a lock icon. The "Revise &amp; Resubmit" button is suppressed for published articles.
+              <span class="file">templates/frontend/researcher-dashboard.php</span>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="version-block">
+        <div class="version-tag v-prev">🔐 Security</div>
+        <ul class="change-list">
+
+          <li class="change-item item-security">
+            <span class="badge badge-security">SECURITY</span>
+            <div>
+              <strong>Output buffer guards on all AJAX handlers</strong>
+              — <code>ob_start()</code> at entry and <code>ob_end_clean()</code> before every <code>wp_send_json_*()</code> call in <code>send_reviewer_otp()</code>, <code>verify_reviewer_otp()</code>, and <code>unified_login()</code>. Prevents any stray PHP output (notices, warnings, debug messages) from corrupting the JSON response.
+              <span class="file">includes/api/class-researcher-handler.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-security">
+            <span class="badge badge-security">SECURITY</span>
+            <div>
+              <strong>Email enumeration protection on OTP send</strong>
+              — <code>send_reviewer_otp()</code> always returns an identical success response regardless of whether the submitted email matches a verified reviewer. This prevents attackers from determining which emails are registered in the system.
+              <span class="file">includes/api/class-researcher-handler.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-security">
+            <span class="badge badge-security">SECURITY</span>
+            <div>
+              <strong>OTP verification token — single-use + time-limited</strong>
+              — The verification token issued after successful OTP verification is consumed immediately when <code>unified_login()</code> runs (deleted from the transient store). TTL is 3 minutes. This prevents replay attacks where an intercepted token could be reused.
+              <span class="file">includes/api/class-researcher-handler.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-security">
+            <span class="badge badge-security">SECURITY</span>
+            <div>
+              <strong>Role verified server-side after <code>wp_signon()</code></strong>
+              — The <code>role_hint</code> field in the unified login form is a UX hint only. All role-based redirects are determined from the actual WordPress user roles returned by <code>wp_signon()</code>. A reviewer cannot gain researcher access by manipulating the form field.
+              <span class="file">includes/api/class-researcher-handler.php</span>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+
+      <!-- COMPATIBILITY -->
+      <div class="version-block">
+        <div class="version-tag v-prev">🔧 Compatibility</div>
+        <ul class="change-list">
+
+          <li class="change-item item-compat">
+            <span class="badge badge-compat">COMPAT</span>
+            <div>
+              <strong>PHP 7.4+ compatibility: spread operator removed from <code>$wpdb->prepare()</code></strong>
+              — Replaced the PHP 8.1 named-argument spread (<code>...$args</code>) with <code>call_user_func_array([$wpdb, 'prepare'], ...)</code>. Plugin minimum is PHP 7.4 (declared in headers).
+              <span class="file">includes/api/class-researcher-handler.php</span>
+            </div>
+          </li>
+
+          <li class="change-item item-compat">
+            <span class="badge badge-compat">COMPAT</span>
+            <div>
+              <strong>Theme-agnostic nav menu injection (4-strategy fallback)</strong>
+              — The user menu widget injection supports: (1) replace existing login <code>&lt;li&gt;</code>, (2) append to primary nav <code>&lt;ul&gt;</code> (Astra, OceanWP, GeneratePress, etc.), (3) append to first <code>&lt;nav&gt;</code>, (4) fixed floating badge as last resort.
+              <span class="file">assets/js/nav-user-menu.js</span>
+            </div>
+          </li>
+
+          <li class="change-item item-compat">
+            <span class="badge badge-compat">COMPAT</span>
+            <div>
+              <strong>Elementor &amp; custom header builder support for login hiding</strong>
+              — Client-side <code>hideLoginItems()</code> scans Elementor nav menu elements (<code>.elementor-nav-menu li</code>, <code>.e-n-menu li</code>) and standalone button widgets (<code>.elementor-widget-button a</code>) in addition to standard WordPress nav menus.
+              <span class="file">assets/js/nav-user-menu.js</span>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+
+    </div><!-- .section-body -->
+  </div><!-- .section v2.0.0 -->
+
+  <!-- ════════════════════════════════════════════════
+       PREVIOUS VERSIONS (summary)
+  ═════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-head" style="background:#f9fafb;">
+      <div class="icon" style="background:#e5e7eb;color:#6b7280;">📋</div>
+      <div>
+        <h2>Previous Version History</h2>
+        <p style="font-size:12px;color:#6b7280;">Prior milestone summaries</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="version-block">
+        <div class="version-tag v-prev">v1.6 — Schema Migration: is_deleted column</div>
+        <ul class="change-list">
+          <li class="change-item item-fix">
+            <span class="badge badge-fix">FIX</span>
+            <div>Added <code>is_deleted</code> column to <code>eiu_reviewers</code> table via <code>migrate_1_6()</code>. The column existed only on <code>eiu_reviews</code>, causing the OTP send handler to crash with a MySQL "Unknown column" error.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="version-block">
+        <div class="version-tag v-prev">v1.5 — Unified Login Page</div>
+        <ul class="change-list">
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>Created <code>/login/</code> page with <code>[eiu_unified_login]</code> shortcode for all roles. Deferred page creation via <code>init</code> hook. Schema version 1.5.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="version-block">
+        <div class="version-tag v-prev">v1.4 — Revision Workflow + File Upload Redesign</div>
+        <ul class="change-list">
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>Added <code>revision_notes</code> and <code>revision_count</code> columns to <code>eiu_articles</code>. Reviewer can now submit "Revision Required" recommendation with detailed notes sent to the researcher via email. Researcher sees "Revise &amp; Resubmit" flow.</div>
+          </li>
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>Thumbnail and author photos switched to direct file upload (drag-drop + file picker). WordPress Media Library removed from frontend for security. DOI and ISSN fields removed from submission form (DB columns preserved).</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="version-block">
+        <div class="version-tag v-prev">v1.3 — Researcher Role &amp; Portal Pages</div>
+        <ul class="change-list">
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>Introduced <code>eiu_researcher</code> WordPress role with capabilities <code>eiu_submit_articles</code> and <code>eiu_view_own_articles</code>. Created Researcher Portal, Researcher Dashboard, and Reviewer Access pages automatically.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="version-block">
+        <div class="version-tag v-prev">v1.2 — Extended Article Metadata</div>
+        <ul class="change-list">
+          <li class="change-item item-enhance">
+            <span class="badge badge-enhance">ENHANCE</span>
+            <div>Added <code>keywords</code>, <code>disclosures</code>, <code>references</code>, <code>advisers</code>, and <code>summary</code> columns to <code>eiu_articles</code>. Added <code>eiu_download_leads</code> table for article download tracking.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="version-block">
+        <div class="version-tag v-prev">v1.0 — Initial Release</div>
+        <ul class="change-list">
+          <li class="change-item item-new">
+            <span class="badge badge-new">NEW</span>
+            <div>Initial plugin release. Core article submission, peer review workflow, reviewer management, AJAX handlers, admin dashboard, email notifications, and frontend article listing.</div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       FILES MODIFIED IN v2.0.0
+  ═════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-head" style="background:#f0fdf4;">
+      <div class="icon" style="background:#dcfce7;color:#15803d;">📁</div>
+      <h2>Files Modified in v2.0.0</h2>
+    </div>
+    <div class="section-body" style="padding:0;">
+      <table class="file-table">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Type</th>
+            <th>Summary of Changes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fname">eiu-research-publication.php</td>
+            <td><span class="badge badge-enhance">CORE</span></td>
+            <td class="fdesc">Version bumped from 1.2.0 → 2.0.0. All authorship preserved.</td>
+          </tr>
+          <tr>
+            <td class="fname">includes/core/class-plugin.php</td>
+            <td><span class="badge badge-enhance">ENHANCE</span></td>
+            <td class="fdesc">Added: unified login shortcode, nav menu hooks, login item hiding filter, submission access wall, reviewer dashboard redirect, loginPageUrls in nav data, unified login URL in hide filter.</td>
+          </tr>
+          <tr>
+            <td class="fname">includes/core/class-upgrader.php</td>
+            <td><span class="badge badge-new">NEW</span></td>
+            <td class="fdesc">Schema v1.6. Added migrate_1_5 (unified login page), migrate_1_6 (is_deleted column on eiu_reviewers), create_unified_login_page(), create_all_pages_deferred(). Bootstrap guard for ZIP installs.</td>
+          </tr>
+          <tr>
+            <td class="fname">includes/core/class-activator.php</td>
+            <td><span class="badge badge-fix">FIX</span></td>
+            <td class="fdesc">Added is_deleted column to eiu_reviewers CREATE TABLE. Added unified login page to create_pages list. Added bootstrap_tables() public method.</td>
+          </tr>
+          <tr>
+            <td class="fname">includes/api/class-researcher-handler.php</td>
+            <td><span class="badge badge-new">NEW</span></td>
+            <td class="fdesc">Added: unified_login(), send_reviewer_otp(), verify_reviewer_otp(), get_article_statuses(). Fixed PHP 7.4 spread operator. Added ob_start guards to all AJAX methods.</td>
+          </tr>
+          <tr>
+            <td class="fname">templates/frontend/unified-login.php</td>
+            <td><span class="badge badge-new">NEW</span></td>
+            <td class="fdesc">Complete rewrite: 3-step OTP reviewer flow, colour-coded role tab cards, role banner, progressive JS with non-JSON fetch fallback.</td>
+          </tr>
+          <tr>
+            <td class="fname">templates/frontend/submission-form.php</td>
+            <td><span class="badge badge-enhance">ENHANCE</span></td>
+            <td class="fdesc">Wizard navigation (Prev/Next/Submit), progress bar, per-step validation, mobile CSS. Abstract editor upgraded. Removed author_org from stepValidation.</td>
+          </tr>
+          <tr>
+            <td class="fname">templates/frontend/researcher-dashboard.php</td>
+            <td><span class="badge badge-enhance">ENHANCE</span></td>
+            <td class="fdesc">Published article lock, data-article-id/status on rows, real-time 30s polling, status-change toast, cross-role protection, unified login redirect. Removed redundant regex fallback.</td>
+          </tr>
+          <tr>
+            <td class="fname">templates/frontend/reviewer-dashboard.php</td>
+            <td><span class="badge badge-enhance">ENHANCE</span></td>
+            <td class="fdesc">Inline login form removed. Redirect to unified login. Cross-role protection. Dark sign-out footer.</td>
+          </tr>
+          <tr>
+            <td class="fname">templates/frontend/researcher-login.php</td>
+            <td><span class="badge badge-compat">COMPAT</span></td>
+            <td class="fdesc">Delegates to unified-login.php for backward compatibility. Old shortcode [eiu_researcher_login] still functional.</td>
+          </tr>
+          <tr>
+            <td class="fname">assets/js/nav-user-menu.js</td>
+            <td><span class="badge badge-new">NEW</span></td>
+            <td class="fdesc">v1.8: hideLoginItems() with 5-strategy detection. Handles Elementor nav menus and standalone buttons. ulSwitchRole updated for red reviewer identity.</td>
+          </tr>
+          <tr>
+            <td class="fname">assets/css/nav-user-menu.css</td>
+            <td><span class="badge badge-enhance">ENHANCE</span></td>
+            <td class="fdesc">Added eiu-rp-login-hidden rule (display:none !important), eiu-nav-av-initial initials fallback, mobile tweaks.</td>
+          </tr>
+          <tr>
+            <td class="fname">assets/js/frontend.js</td>
+            <td><span class="badge badge-fix">FIX</span></td>
+            <td class="fdesc">Removed duplicated nav menu JS block (moved to nav-user-menu.js). Updated header comment.</td>
+          </tr>
+          <tr>
+            <td class="fname">includes/roles/class-researcher-role.php</td>
+            <td><span class="badge badge-compat">COMPAT</span></td>
+            <td class="fdesc">No functional changes. Authorship and structure preserved.</td>
+          </tr>
+          <tr>
+            <td class="fname">includes/roles/class-roles-manager.php</td>
+            <td><span class="badge badge-compat">COMPAT</span></td>
+            <td class="fdesc">No functional changes. Authorship and structure preserved.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       COMPATIBILITY MATRIX
+  ═════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-head" style="background:#fdf4ff;">
+      <div class="icon" style="background:#f3e8ff;color:#7c3aed;">✅</div>
+      <h2>Compatibility &amp; Requirements</h2>
+    </div>
+    <div class="section-body">
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">WordPress Version</div>
+        <div class="compat-val">5.8 or higher (tested up to 6.5)</div>
+      </div>
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">PHP Version</div>
+        <div class="compat-val">7.4 or higher (PHP 8.0, 8.1, 8.2 compatible)</div>
+      </div>
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">MySQL / MariaDB</div>
+        <div class="compat-val">5.7+ / 10.3+ — all migrations use IF NOT EXISTS / DESCRIBE checks</div>
+      </div>
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">WordPress Multisite</div>
+        <div class="compat-val">Supported — activation iterates all sub-sites</div>
+      </div>
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">Elementor</div>
+        <div class="compat-val">Compatible — login hiding covers Elementor nav widget</div>
+      </div>
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">WP Mail SMTP / Email plugins</div>
+        <div class="compat-val">Compatible — Mailer uses wp_mail() with priority 20 filters</div>
+      </div>
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">Themes (nav menu)</div>
+        <div class="compat-val">Theme-agnostic (4-strategy injection: Astra, OceanWP, GeneratePress, Twenty-series, custom)</div>
+      </div>
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">JavaScript</div>
+        <div class="compat-val">Vanilla ES5+ — no external JS frameworks required</div>
+      </div>
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">Existing Data</div>
+        <div class="compat-val">All database records, user accounts, uploaded files, and plugin options preserved</div>
+      </div>
+      <div class="compat-row">
+        <div class="compat-dot dot-green"></div>
+        <div class="compat-key">Admin (/wp-admin)</div>
+        <div class="compat-val">Unaffected — no changes to WordPress admin login flow</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .container -->
+
+<!-- ── Footer ── -->
+<footer class="site-footer">
+  <strong>EIU Research Publication Plugin</strong> — Version 2.0.0<br>
+  Developed by <strong>Christian Manaoat</strong> for <strong>EIU IT Department</strong><br>
+  Plugin URI: <strong>https://eiu.ac</strong> &nbsp;·&nbsp; Support: <strong>support@eiu.ac</strong><br>
+  License: <strong>2021-989820-PH</strong> &nbsp;·&nbsp; All authorship and ownership details preserved and unchanged.
+</footer>
+
+</body>
+</html>
